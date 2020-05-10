@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "826097",
+      "name": "登录",
+      "font_class": "denglu",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "6282754",
+      "name": "密码 copy",
+      "font_class": "mimacopy",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    }
+  ]
+}
