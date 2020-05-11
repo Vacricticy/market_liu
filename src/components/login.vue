@@ -73,7 +73,8 @@ export default {
         if(res.meta.status!=200){
           return  this.$message.error("帐号或密码输入有误哦");
         }
-        this.$message.success("登录成功")
+        // this.$message.success("登录成功")
+        this.$notify.success({message:"登录成功",duration:1000})
         console.log(res);
         window.sessionStorage.setItem("token",res.data.token)
         this.$router.push('/home')
