@@ -20,6 +20,8 @@
           :unique-opened="true"
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
+          :default-active="activeMenu"
         >
           <!-- 一级菜单 -->
           <el-submenu
@@ -33,9 +35,10 @@
             </template>
             <!-- 二级菜单 -->
             <el-menu-item
-              :index="subItem.id + ''"
+              :index="'/' + subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
+              @click="setActiveMenu('/' + subItem.path)"
             >
               <template slot="title">
                 <!-- 图标 -->
@@ -47,7 +50,9 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -64,10 +69,12 @@ export default {
         145: "iconfont icon-shujutongji",
       },
       isCollapse: false,
+      activeMenu: "",
     };
   },
   created() {
     this.getMenu();
+    this.activeMenu = window.sessionStorage.getItem("activeMenu");
   },
   methods: {
     logout() {
@@ -86,6 +93,11 @@ export default {
     // 折叠功能
     collapse() {
       this.isCollapse = !this.isCollapse;
+    },
+    // 保存并设置当前激活的路由,保证页面刷新后显示的仍然是原路由
+    setActiveMenu(activeMenu) {
+      window.sessionStorage.setItem("activeMenu", activeMenu);
+      this.activeMenu = activeMenu;
     },
   },
 };
