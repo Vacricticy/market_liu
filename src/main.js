@@ -17,7 +17,7 @@ axios.interceptors.request.use((config) => {
     config.headers.Authorization = window.sessionStorage.getItem("token");
     return config;
 });
-//挂载到原型对象上
+//挂载到原型对象的http属性上
 Vue.prototype.$http = axios;
 
 Vue.config.productionTip = false;

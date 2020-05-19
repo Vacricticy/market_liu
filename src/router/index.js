@@ -23,7 +23,7 @@ const router = new VueRouter({
     routes,
 });
 
-// 保证每次请求时带上token
+// 保证每次页面请求时带上token
 router.beforeEach((to, from, next) => {
     if (to.path == "/login") return next();
     const token = window.sessionStorage.getItem("token");

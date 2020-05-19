@@ -96,7 +96,7 @@ export default {
     },
     // 保存并设置当前激活的路由,保证页面刷新后显示的仍然是原路由
     setActiveMenu(activeMenu) {
-      window.sessionStorage.setItem("activeMenu", activeMenu);
+      window.sessionStorage.setItem("activeMenu", activeMenu);//保证页面刷新后显示的仍然是原路由
       this.activeMenu = activeMenu;
     },
   },
