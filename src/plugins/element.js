@@ -17,7 +17,11 @@ import {
     BreadcrumbItem,
     Card,
     Row,
-    Col
+    Col,
+    Table,
+    TableColumn,
+    Switch,
+    Tooltip
 } from "element-ui";
 // 注册为全局组件
 Vue.use(Button);
@@ -36,5 +40,9 @@ Vue.use(BreadcrumbItem);
 Vue.use(Card);
 Vue.use(Row);
 Vue.use(Col);
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Switch);
+Vue.use(Tooltip);
 Vue.prototype.$message = Message;
 Vue.prototype.$notify = Notification;

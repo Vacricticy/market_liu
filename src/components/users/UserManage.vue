@@ -17,6 +17,47 @@
             <el-button type="primary">添加用户</el-button>
           </el-col>
         </el-row>
+
+        <el-table :data="userList" style="width: 100%" border stripe>
+          <el-table-column label="#" type="index"></el-table-column>
+          <el-table-column prop="username" label="姓名"> </el-table-column>
+          <el-table-column prop="email" label="邮箱"> </el-table-column>
+          <el-table-column prop="mobile" label="电话"> </el-table-column>
+          <el-table-column prop="role_name" label="角色"> </el-table-column>
+          <el-table-column label="状态">
+            <!-- 作用域插槽 -->
+            <template v-slot:="scope">
+              <el-switch v-model="scope.row.mg_state"> </el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column prop="" label="操作" width="180">
+            <template v-slot:="scope">
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                size="mini"
+              ></el-button>
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+              ></el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="分配角色"
+                placement="top"
+                :enterable="false"
+              >
+                <el-button
+                  type="warning"
+                  icon="el-icon-setting"
+                  size="mini"
+                ></el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-card>
     </div>
   </div>
