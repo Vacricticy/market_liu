@@ -9,12 +9,23 @@
       <el-card class="box-card">
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-input placeholder="请输入内容">
-              <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-input
+              placeholder="请输入内容"
+              v-model="paramsBody.query"
+              clearable
+              @clear="getUserData"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getUserData"
+              ></el-button>
             </el-input>
           </el-col>
           <el-col :span="6">
-            <el-button type="primary">添加用户</el-button>
+            <el-button type="primary" @click="addUserVisible = true"
+              >添加用户</el-button
+            >
           </el-col>
         </el-row>
 
@@ -27,7 +38,11 @@
           <el-table-column label="状态">
             <!-- 作用域插槽 -->
             <template v-slot:="scope">
-              <el-switch v-model="scope.row.mg_state"> </el-switch>
+              <el-switch
+                v-model="scope.row.mg_state"
+                @change="changeUserStatus(scope.row)"
+              >
+              </el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="" label="操作" width="180">
@@ -58,21 +73,115 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="paramsBody.pagenum"
+          :page-sizes="[1, 2, 5, 10]"
+          :page-size="paramsBody.pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
+        </el-pagination>
       </el-card>
+      <el-dialog title="提示" :visible.sync="addUserVisible" width="50%">
+        <el-form
+          :model="addUserForm"
+          :rules="addUserRules"
+          ref="addUserRef"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="addUserForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="addUserForm.password" type="password"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="addUserForm.email"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" prop="mobile">
+            <el-input v-model="addUserForm.mobile"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="addUserVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addUserVisible = false"
+            >确 定</el-button
+          >
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
 export default {
   data() {
+    //自定义的邮箱和手机验证规则
+    var checkEmail = (rule, value, callback) => {
+      const regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (regEmail.test(value)) {
+        return callback();
+      }
+      callback(new Error("请输入合法的验证码"));
+    };
+    var checkMobile = (rule, value, callback) => {
+      const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (regMobile.test(value)) {
+        return callback();
+      }
+      callback(new Error("请输入合法的手机号"));
+    };
     return {
       paramsBody: {
         query: "",
-        pagenum: "1",
-        pagesize: "5",
+        pagenum: 1,
+        pagesize: 5,
       },
       userList: [],
       total: 0,
+      // 添加用户的对话框是否可见
+      addUserVisible: false,
+      // 添加用户表单
+      addUserForm: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: "",
+      },
+      // 添加用户表单的验证规则
+      addUserRules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 15,
+            message: "长度在 6 到 15 个字符",
+            trigger: "blur",
+          },
+        ],
+        email: [
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" },
+        ],
+        mobile: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          {
+            validator: checkMobile,
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   created() {
@@ -88,6 +197,27 @@ export default {
       this.userList = res.data.users;
       this.total = res.data.total;
       console.log(res);
+    },
+    //页记录数改变时触发
+    handleSizeChange(pageSize) {
+      this.paramsBody.pagesize = pageSize;
+      this.getUserData();
+    },
+    //当前页码改变时触发
+    handleCurrentChange(currentPage) {
+      this.paramsBody.pagenum = currentPage;
+      this.getUserData();
+    },
+    //改变用户状态
+    async changeUserStatus(newUserInfo) {
+      console.log(newUserInfo);
+      const { data: res } = await this.$http.put(
+        `users/${newUserInfo.id}/state/${newUserInfo.mg_state}`
+      );
+      if (res.meta.status != 200)
+        return this.$message.error("用户状态更新失败");
+      this.$message.success("用户状态更新成功");
+      // console.log(res);
     },
   },
 };
