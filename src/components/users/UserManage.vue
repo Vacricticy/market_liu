@@ -29,6 +29,7 @@
           </el-col>
         </el-row>
 
+        <!-- 用户信息表 -->
         <el-table :data="userList" style="width: 100%" border stripe>
           <el-table-column label="#" type="index"></el-table-column>
           <el-table-column prop="username" label="姓名"> </el-table-column>
@@ -73,6 +74,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <!-- 分页栏 -->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -84,7 +86,14 @@
         >
         </el-pagination>
       </el-card>
-      <el-dialog title="提示" :visible.sync="addUserVisible" width="50%">
+
+      <!-- 添加用户弹出的对话框 -->
+      <el-dialog
+        title="提示"
+        :visible.sync="addUserVisible"
+        width="50%"
+        @close="clearAddUserForm"
+      >
         <el-form
           :model="addUserForm"
           :rules="addUserRules"
@@ -107,9 +116,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addUserVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addUserVisible = false"
-            >确 定</el-button
-          >
+          <el-button type="primary" @click="addUser">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -156,8 +163,8 @@ export default {
           { required: true, message: "请输入用户名", trigger: "blur" },
           {
             min: 3,
-            max: 10,
-            message: "长度在 3 到 10 个字符",
+            max: 18,
+            message: "长度在 3 到 18 个字符",
             trigger: "blur",
           },
         ],
@@ -188,6 +195,7 @@ export default {
     this.getUserData();
   },
   methods: {
+    // 获取用户数据
     async getUserData() {
       let { data: res } = await this.$http.get("/users", {
         params: this.paramsBody,
@@ -218,6 +226,29 @@ export default {
         return this.$message.error("用户状态更新失败");
       this.$message.success("用户状态更新成功");
       // console.log(res);
+    },
+    // 重置表单
+    clearAddUserForm() {
+      this.$refs.addUserRef.resetFields();
+    },
+    // 点击确认按钮，添加新用户
+    addUser() {
+      this.$refs.addUserRef.validate(async (validate) => {
+        if (!validate) return;
+        const { data: res } = await this.$http.post("users", this.addUserForm);
+        if (res.meta.status != 200) {
+          this.$notify.error({
+            title: "添加用户失败",
+            duration: 1200,
+          });
+        }
+        this.$notify.success({
+          title: "用户添加成功",
+          duration: 1200,
+        });
+        this.getUserData();
+        this.addUserVisible = false;
+      });
     },
   },
 };
