@@ -29,6 +29,7 @@ import {
     Tree,
     Select,
     Option,
+    Cascader
 } from "element-ui";
 // 注册为全局组件
 Vue.use(Button);
@@ -57,6 +58,7 @@ Vue.use(Tag);
 Vue.use(Tree);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(Cascader)
 Vue.prototype.$message = Message;
 Vue.prototype.$notify = Notification;
 Vue.prototype.$confirm = MessageBox.confirm;

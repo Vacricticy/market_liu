@@ -7,7 +7,8 @@ import "./plugins/element.js";
 import "./assets/css/global.css";
 // 导入第三方图标库
 import "./assets/font/iconfont.css";
-
+// 导入带有树形结构的表格插件
+import ZkTable from "vue-table-with-tree-grid";
 //导入axios
 import axios from "axios";
 //配置请求的根路径
@@ -19,6 +20,9 @@ axios.interceptors.request.use((config) => {
 });
 //挂载到原型对象的http属性上
 Vue.prototype.$http = axios;
+
+// 将导入的第三方插件注册在全局组件上
+Vue.component("tree-table", ZkTable);
 
 Vue.config.productionTip = false;
 
