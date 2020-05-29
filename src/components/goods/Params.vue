@@ -51,7 +51,7 @@
                       v-for="(item, index) in scope.row.attr_vals"
                       :key="index"
                       closable
-                      @close="deleteAttr(scope.row, index)"
+                      @close="deleteAttrItem(scope.row, index)"
                       >{{ item }}</el-tag
                     >
                     <!-- 添加可选项的输入文本框 -->
@@ -117,7 +117,7 @@
                       v-for="(item, index) in scope.row.attr_vals"
                       :key="index"
                       closable
-                      @close="deleteAttr(scope.row, index)"
+                      @close="deleteAttrItem(scope.row, index)"
                       >{{ item }}</el-tag
                     >
                     <!-- 添加可选项的输入文本框 -->
@@ -451,7 +451,7 @@ export default {
       this.$message.success("修改参数成功");
     },
     // 删除参数的值
-    deleteAttr(row, i) {
+    deleteAttrItem(row, i) {
       row.attr_vals.splice(i, 1);
       this.saveAttr(row);
     },
@@ -487,7 +487,7 @@ export default {
 
 <style lang="less" scoped>
 .cat_opt {
-  margin: 15px 0;
+  margin: 15px 0 0 0;
 }
 .el-cascader {
   margin-left: 10px;
