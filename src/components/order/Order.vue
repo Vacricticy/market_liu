@@ -61,10 +61,12 @@
               size="mini"
               @click="editAddressDialogVisible = true"
             ></el-button>
+            <!-- 查看物流详情 -->
             <el-button
               type="success"
               icon="el-icon-location-outline"
               size="mini"
+              @click="showProgressDialog"
             ></el-button>
           </template>
         </el-table-column>
@@ -119,12 +121,30 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 查看物流的对话框 -->
+    <el-dialog
+      title="物流详情"
+      :visible.sync="progressDialogVisible"
+      width="50%"
+    >
+      <timeline v-for="(item, index) in progressList" :key="index">
+        <timeline-title>{{ item.time }}</timeline-title>
+        <timeline-item bg-color="#9dd8e0">{{ item.context }}</timeline-item>
+      </timeline>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import cityData from "./citydata.js";
+import { Timeline, TimelineItem, TimelineTitle } from "vue-cute-timeline";
 export default {
+  components: {
+    Timeline,
+    TimelineItem,
+    TimelineTitle,
+  },
   name: "",
   data() {
     return {
@@ -159,6 +179,10 @@ export default {
           { required: true, message: "请填写详细地址", trigger: "blur" },
         ],
       },
+      // 物流详情对话框的显示与隐藏
+      progressDialogVisible: false,
+      // 物流信息
+      progressList: [],
     };
   },
   created() {
@@ -198,6 +222,16 @@ export default {
     clearAddressForm() {
       this.addressForm.selectedAddress = [];
       this.$refs.addressRef.resetFields();
+    },
+    // 显示物流详情的对话框
+    async showProgressDialog() {
+      this.progressDialogVisible = true;
+      const { data: res } = await this.$http.get(`/kuaidi/1106975712662`);
+      if (res.meta.status != 200) {
+        this.$message.error("获取物流信息失败");
+      }
+      // console.log(res);
+      this.progressList = res.data;
     },
   },
 };
